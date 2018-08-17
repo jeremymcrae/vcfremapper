@@ -5,7 +5,7 @@ import io
 from setuptools import setup
 
 setup (name="vcfremapper",
-    description='Package to maps VCFs between genome builds',
+    description='Package to map VCFs between genome builds',
     long_description=io.open('README.md', encoding='utf-8').read(),
     version="1.0.0",
     author="Jeremy McRae",
