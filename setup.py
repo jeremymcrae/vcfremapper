@@ -20,4 +20,5 @@ setup (name="vcfremapper",
         "Development Status :: 4 - Beta",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "License :: OSI Approved :: MIT License",
-    ])
+    ],
+    test_suite='tests')
