@@ -11,7 +11,9 @@ setup (name="vcfremapper",
     license="MIT",
     url='https://github.com/jeremymcrae/vcfremapper',
     packages=["vcfremapper"],
-    install_requires=['pyliftover >= 0.3.0',
+    install_requires=[
+        'pyliftover >= 0.3.0',
+        'pyfaidx >= 0.5.4'
     ],
     entry_points={'console_scripts': ['vcfremapper = vcfremapper.__main__:main']},
     classifiers=[

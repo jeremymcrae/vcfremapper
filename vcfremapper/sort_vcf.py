@@ -1,6 +1,8 @@
 
 import gzip
 
+from vcfremapper import CHROMS
+
 def sort_vcf(coords, handle, outpath, header, prefixed):
     ''' write a sorted VCF
     
@@ -16,10 +18,6 @@ def sort_vcf(coords, handle, outpath, header, prefixed):
         header: header lines for the output VCF
         prefixed: whether the chromosome strings are prefixed with 'chr'
     '''
-    
-    CHROMS = list(map(str, range(1, 23))) + ['X', 'Y', 'MT']
-    if prefixed:
-        CHROMS = [ 'chr{}'.format(x) for x in CHROMS ]
     
     seeker = open(handle.name, 'rt')
     

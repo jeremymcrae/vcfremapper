@@ -9,6 +9,7 @@ import argparse
 from collections import defaultdict
 
 from pyliftover import LiftOver
+from pyfaidx import Fasta
 
 from vcfremapper.vcf import VCF
 from vcfremapper.remap import remap
@@ -18,6 +19,8 @@ def get_options():
     parser = argparse.ArgumentParser()
     parser.add_argument('vcf', nargs='?', default=sys.stdin.buffer)
     parser.add_argument('out', nargs='?', default=sys.stdout)
+    parser.add_argument('--reference', required=True,
+        help='path to reference genome, for the build being converted to.')
     parser.add_argument('--build-in', default='hg19', help='build to convert from')
     parser.add_argument('--build-out', default='hg38', help='build to convert to')
     parser.add_argument('--tempdir', default='/scratch')
@@ -27,13 +30,14 @@ def get_options():
 def main():
     args = get_options()
     converter = LiftOver(args.build_in, args.build_out)
+    genome = Fasta(args.reference)
     
     vcf = VCF(gzip.open(args.vcf, 'rt'))
     temp = tempfile.TemporaryFile('wt', dir=args.tempdir)
     
     coords = defaultdict(dict)
     for var in vcf:
-        mapped = remap(converter, var)
+        mapped = remap(converter, var, genome)
         if mapped is None:
             continue
         

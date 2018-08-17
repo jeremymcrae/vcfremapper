@@ -1,17 +1,29 @@
 
+from vcfremapper.info import Info
+from vcfremapper.samples import Samples
+
 class Variant(object):
     ''' Variant object, to hold data from VCF line
     '''
     def __init__(self, line):
-        self.chrom, pos, self.var_id, self.ref, alts, \
-            self.rest = line.strip('\n').split('\t', 5)
+        line = line.strip('\n').split('\t')
+        self.chrom, pos, self.var_id, self.ref, alts, self.qual, self.filter, \
+            self.info = line[:8]
+        
         self.pos = int(pos)
         self.alts = alts
+        self.info = Info(self.info)
+        self.samples = None if len(line) == 7 else Samples(line[8], line[9:])
     
     def __str__(self):
         alts = ','.join(self.alts)
-        return '{}\t{}\t{}\t{}\t{}\t{}\n'.format(self.chrom, self.pos,
-            self.var_id, self.ref, alts, self.rest)
+        data = [self.chrom, self.pos, self.var_id, self.ref, alts, self.qual,
+            self.filter, self.info]
+        
+        if self.samples is not None:
+            data += self.samples
+        
+        return '\t'.join(map(str, data)) + '\n'
     
     @property
     def alts(self):
