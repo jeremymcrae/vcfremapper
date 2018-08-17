@@ -4,7 +4,7 @@ try:
 except ImportError:
     maketrans = str.maketrans
 
-transdict = maketrans('ACGTNacgtn', 'TGCANtgcan')
+transdict = maketrans('ACGTNacgtn*', 'TGCANtgcan*')
 
 def revcomp(seq):
     ''' reverse complement a sequence
