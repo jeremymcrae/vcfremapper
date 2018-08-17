@@ -1,6 +1,4 @@
 
-import sys
-import os
 import io
 from setuptools import setup
 
