@@ -22,7 +22,13 @@ def reverse_var(var, genome):
     
     if all(is_snv(var.ref, x) for x in var.alts):
         var = reverse_snv(var)
-    elif len(var.alts) == 1 and is_indel(var.ref, var.alts[0]):
+        var.pos -= len(var.ref) - 1
+    
+    # we can't convert multiallelic variants with non-SNV alts.
+    if len(var.alts) > 1:
+        return None
+    
+    if len(var.alts) == 1 and is_indel(var.ref, var.alts[0]):
         reverse_indel(var, genome)
     elif is_cnv(var.ref, var.alts, var.info):
         reverse_cnv(var, genome)
@@ -81,13 +87,13 @@ def is_snv(ref, alt):
     ''' check whether the ref and alt alleles are for a SNV
     '''
     return (len(ref) == 1 and len(alt) == 1) or \
-        (len(ref) == len(alt) and set(ref) in BASES and set(alt) in bases)
+        (len(ref) == len(alt) and BASES.issuperset(set(alt) | set(ref)))
 
 def is_indel(ref, alt):
     ''' check whether the ref and alt alleles are for an indel
     '''
     return len(ref) > 1 or len(alt) > 1 and \
-        (set(ref) in BASES and set(alt) in bases)
+        (BASES.issuperset(set(alt) | set(ref)))
 
 def is_cnv(ref, alt, info):
-    return 'SVLEN' in info
+    return 'SVLEN' in info or 'DEL' in alt or 'DUP' in alt or 'INS' in alt
