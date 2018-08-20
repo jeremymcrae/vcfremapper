@@ -1,6 +1,7 @@
 
 class Info(object):
-    
+    ''' class for INFO field of VCF variants
+    '''
     def __init__(self, values):
         self.info = {}
         
@@ -18,7 +19,7 @@ class Info(object):
         info = []
         for key, value in sorted(self.info.items()):
             entry = key
-            if value != True:
+            if not value:
                 entry = '{}={}'.format(key, value)
             info.append(entry)
             

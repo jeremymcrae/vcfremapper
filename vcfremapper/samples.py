@@ -1,18 +1,18 @@
 
 class Sample(object):
-    format = None
+    fields = []
     @classmethod
-    def set_format(cls_obj, format):
-        cls_obj.format = format.split(':')
+    def set_format(cls_obj, fields):
+        cls_obj.fields = fields.split(':')
     
     def __init__(self, sample):
         if sample == '.':
-            self.data = dict(zip(self.format, [ '.' for x in self.format ]))
+            self.data = dict(zip(self.fields, [ '.' for x in self.fields ]))
         else:
-            self.data = dict(zip(self.format, sample.split(':')))
+            self.data = dict(zip(self.fields, sample.split(':')))
     
     def __str__(self):
-        return ':'.join( self[x] for x in self.format )
+        return ':'.join( self[x] for x in self.fields )
     
     def __getitem__(self, key):
         return self.data[key]
@@ -27,13 +27,13 @@ class Sample(object):
         del self.data[key]
 
 class Samples(object):
-    def __init__(self, format, samples):
-        Sample.set_format(format)
+    def __init__(self, fields, samples):
+        Sample.set_format(fields)
         self.samples = [ Sample(x) for x in samples ]
         self.idx = -1
         
     def __str__(self):
-        return [':'.join(Sample.format)] + self.samples
+        return [':'.join(Sample.fields)] + self.samples
     
     def __iter__(self):
         return self

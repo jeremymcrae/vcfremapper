@@ -33,7 +33,7 @@ class Variant(object):
     def alts(self, value):
         ''' set alts attribute from either list or comma-separated string
         '''
-        if type(value) == list:
+        if isinstance(value, list):
             self._alts = value
         else:
             self._alts = value.split(',')

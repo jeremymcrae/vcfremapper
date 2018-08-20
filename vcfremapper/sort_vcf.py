@@ -1,6 +1,4 @@
 
-import gzip
-
 from vcfremapper import CHROMS
 
 def sort_vcf(coords, handle, outpath, header, prefixed):

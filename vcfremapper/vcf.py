@@ -22,7 +22,7 @@ class VCF(object):
     @header.setter
     def header(self, handle):
         self._header = []
-        for line in self.handle:
+        for line in handle:
             if line.startswith('#'):
                 self._header.append(line)
             else:
