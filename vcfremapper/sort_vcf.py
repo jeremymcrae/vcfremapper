@@ -1,7 +1,7 @@
 
 from vcfremapper import CHROMS
 
-def sort_vcf(coords, handle, outpath, header, prefixed):
+def sort_vcf(coords, handle, outpath, header):
     ''' write a sorted VCF
     
     We previously indexed variant file offsets by chromosome and position, so we
@@ -14,7 +14,6 @@ def sort_vcf(coords, handle, outpath, header, prefixed):
         handle: file handle for indexed file, where we know the variant offsets
         outpath: path to write VCF to (or writeable file handle)
         header: header lines for the output VCF
-        prefixed: whether the chromosome strings are prefixed with 'chr'
     '''
     
     seeker = open(handle.name, 'rt')
