@@ -36,3 +36,10 @@ class Info(object):
     
     def __delitem__(self, key):
         del self.info[key]
+    
+    def __eq__(self, other):
+        if set(self.info.keys()) != set(other.info.keys()):
+            return False
+        
+        return all(self[key] == other[key] for key in self.info)
+            
