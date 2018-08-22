@@ -19,7 +19,7 @@ class Info(object):
         info = []
         for key, value in sorted(self.info.items()):
             entry = key
-            if not value:
+            if value != True:
                 entry = '{}={}'.format(key, value)
             info.append(entry)
             
