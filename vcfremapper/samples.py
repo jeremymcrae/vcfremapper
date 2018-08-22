@@ -33,7 +33,8 @@ class Samples(object):
         self.idx = -1
         
     def __str__(self):
-        return [':'.join(Sample.fields)] + self.samples
+        data = [':'.join(Sample.fields)] + list(map(str, self.samples))
+        return '\t'.join(data)
     
     def __iter__(self):
         return self
