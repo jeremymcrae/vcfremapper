@@ -62,12 +62,10 @@ def reverse_indel(var, genome):
     _, chrom = prefix_chrom(var)
     
     if len(ref) > len(alt):  # handle deletions
-        print(ref, alt, ref[:-len(alt)])
         ref = ref[:-len(alt)]
         alt = genome[chrom][var.pos].seq
         ref = alt + ref
     elif len(alt) > len(ref):  # handle insertions
-        print(ref, alt, alt[:-len(ref)])
         alt = alt[:-len(ref)]
         ref = genome[chrom][var.pos].seq
         alt = ref + alt
