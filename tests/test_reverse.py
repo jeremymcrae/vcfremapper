@@ -1,17 +1,55 @@
 
 
 import unittest
-from vcfremapper.revcomp import revcomp, reverse_var, reverse_snv, reverse_indel, \
-    reverse_cnv, is_snv, is_indel, is_cnv
+import tempfile
+import os
+import shutil
+
+from pyfaidx import Fasta, Faidx
+
+from vcfremapper.revcomp import reverse, complement, revcomp, reverse_var, \
+    reverse_snv, reverse_indel, reverse_cnv, is_snv, is_indel, is_cnv
 
 class TestReverse(unittest.TestCase):
     ''' test swapping variants to reverse strand
     '''
     
     class Var:
-        pass
+        def __init__(self, **kwargs):
+            for k, v in kwargs.items():
+                setattr(self, k, v)
+    
+    @classmethod
+    def setUpClass(cls):
+        cls.dir = tempfile.mkdtemp()
+        
+        # create a fasta file
+        cls.fa = os.path.join(cls.dir, 'genome.fa')
+        with open(cls.fa, mode='wt') as handle:
+            handle.write('>chrN\n')
+            handle.write('ACTGATGCTAGCTAGTATCTGACTCAGTAGCTCGAT\n')
+        
+        # index the fasta file
+        fai = Faidx(cls.fa)
+        fai.close()
+    
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.dir)
+    
+    def test_reverse(self):
+        ''' check that reverse works correctly
+        '''
+        self.assertEqual(reverse('acgt'), 'tgca')
+    
+    def test_complement(self):
+        ''' check that complement works correctly
+        '''
+        self.assertEqual(complement('acct'), 'tgga')
     
     def test_revcomp(self):
+        ''' check that revcomp works correctly
+        '''
         self.assertEqual(revcomp('ACTT'), 'AAGT')
         
         # can handle other allele values
@@ -23,17 +61,83 @@ class TestReverse(unittest.TestCase):
         # non-DNA sequences pass through unmodified (but reversed)
         self.assertEqual(revcomp('MZ'), 'ZM')
     
+    def test_reverse_var(self):
+        ''' check that reverse_var works correctly
+        '''
+        genome = Fasta(self.fa)
+        var = self.Var(pos=10, ref='G', alts=['A', 'C'])
+        rev = reverse_var(var, genome)
+        self.assertEqual(var.ref, 'G')
+        
+        # the position is shifted upwards, because of how pyLiftover changes
+        # the coordinates for the reverse strand
+        self.assertEqual(var.pos, 12)
+        
+        # multi-allelic variants with indels return None
+        var = self.Var(pos=10, ref='G', alts=['A', 'CC'])
+        self.assertIsNone(reverse_var(var, genome))
+    
+    def test_reverse_snv(self):
+        ''' check that reverse_snv works correctly
+        '''
+        var = self.Var(pos=10, ref='G', alts=['A', 'C'])
+        rev = reverse_snv(var)
+        self.assertEqual(rev.alts, ['A', 'C'])
+        
+        # now try a SNV with longer allele codes
+        var = self.Var(pos=10, ref='GCT', alts=['TCT', 'CCT'])
+        rev = reverse_snv(var)
+        self.assertEqual(rev.alts, ['TCT', 'TCC'])
+        self.assertEqual(rev.ref, 'TCG')
+        self.assertEqual(rev.pos, 8)
+    
+    def test_reverse_insertion(self):
+        ''' check that reverse_indel works correctly for insertions
+        '''
+        genome = Fasta(self.fa)
+        var = self.Var(pos=10, chrom='N', ref='G', alts=['GAA'])
+        rev = reverse_indel(var, genome)
+        self.assertEqual(rev.pos, 9)
+        self.assertEqual(rev.ref, 'A')
+        self.assertEqual(rev.alts, ['AAA'])
+    
+    def test_reverse_deletion(self):
+        ''' check that reverse_indel works correctly for deletions
+        '''
+        genome = Fasta(self.fa)
+        var = self.Var(pos=10, chrom='N', ref='GAT', alts=['G'])
+        rev = reverse_indel(var, genome)
+        self.assertEqual(rev.pos, 7)
+        self.assertEqual(rev.ref, 'CTA')
+        self.assertEqual(rev.alts, ['C'])
+    
+    def test_reverse_cnv(self):
+        ''' check that reverse_cnv works correctly
+        '''
+        genome = Fasta(self.fa)
+        var = self.Var(pos=25, chrom='chrN', ref='A', info={'SVLEN': 15})
+        var = reverse_cnv(var, genome)
+        
+        self.assertEqual(var.pos, 10)
+        self.assertEqual(var.ref, 'G')
+    
     def test_is_snv(self):
+        ''' check that is_snv works correctly
+        '''
         self.assertTrue(is_snv('A', 'G'))
         self.assertTrue(is_snv('AT', 'TT'))
         self.assertFalse(is_snv('A', 'TG'))
     
     def test_is_indel(self):
+        ''' check that is_indel works correctly
+        '''
         self.assertTrue(is_indel('A', 'AG'))
         self.assertTrue(is_indel('AG', 'A'))
         self.assertFalse(is_indel('G', 'A'))
     
     def test_is_cnv(self):
+        ''' check that is_cnv works correctly
+        '''
         self.assertTrue(is_cnv('A', '<DEL>', {'SVLEN': 1000}))
         self.assertTrue(is_cnv('A', '<DEL>', {}))
         

@@ -9,61 +9,70 @@ from vcfremapper.utils import prefix_chrom
 transdict = maketrans('ACGTNacgtn*', 'TGCANtgcan*')
 BASES = set(['A', 'C', 'G', 'T', 'N', '*'])
 
+def reverse(seq):
+    ''' reverse a sequence
+    '''
+    return seq[::-1]
+
+def complement(seq):
+    ''' get the sequence complement
+    '''
+    return seq.translate(transdict)
+
 def revcomp(seq):
     ''' reverse complement a sequence
     '''
-    return seq.translate(transdict)[::-1]
+    return reverse(complement(seq))
 
 def reverse_var(var, genome):
     ''' convert a variant that has changed strand
     '''
     var.pos += 2
-    var.ref = revcomp(var.ref)
     
     if all(is_snv(var.ref, x) for x in var.alts):
-        var = reverse_snv(var)
-        var.pos -= len(var.ref) - 1
+        return reverse_snv(var)
     
     # we can't convert multiallelic variants with non-SNV alts.
     if len(var.alts) > 1:
         return None
     
     if len(var.alts) == 1 and is_indel(var.ref, var.alts[0]):
-        reverse_indel(var, genome)
+        return reverse_indel(var, genome)
     elif is_cnv(var.ref, var.alts, var.info):
-        reverse_cnv(var, genome)
+        return reverse_cnv(var, genome)
     
     # TODO: account for variants where the reference sequence has changed. This
     # TODO: also requires GT, PL and AD fields, and various info fields to be
     # TODO: adjusted, if present.
-    
-    return var
 
 def reverse_snv(var):
     ''' reverse a SNV
     '''
-    var.alts = [ revcomp(x) for x in var.alts ]
+    var.ref = reverse(var.ref)
+    var.alts = [reverse(x) for x in var.alts]
+    var.pos -= len(var.ref) - 1
     return var
 
 def reverse_indel(var, genome):
     ''' reverse an indel (with only one alt allele)
     '''
-    
-    ref, alt = var.ref, var.alts[0]
+    ref = reverse(var.ref)
+    alt = reverse(var.alts[0])
     var.pos -= len(ref)
-    alt = revcomp(alt)
     _, chrom = prefix_chrom(var)
     
     if len(ref) > len(alt):  # handle deletions
-        ref = ref.rstrip(alt)
+        print(ref, alt, ref[:-len(alt)])
+        ref = ref[:-len(alt)]
         alt = genome[chrom][var.pos].seq
         ref = alt + ref
     elif len(alt) > len(ref):  # handle insertions
-        alt = alt.rstrip(ref)
+        print(ref, alt, alt[:-len(ref)])
+        alt = alt[:-len(ref)]
         ref = genome[chrom][var.pos].seq
         alt = ref + alt
     
-    var.ref, var.alt = ref, alt
+    var.ref, var.alts = ref, [alt]
     
     # TODO: reject indels spanning multiple mapping regions. We could remap the
     # TODO: start position, then add the length to get a predicted end position.
