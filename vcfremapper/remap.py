@@ -7,11 +7,9 @@ def get_new_coords(converter, chrom, pos):
     ''' find the remapped chrom, position and strand
     '''
     # try at the given site
-    offset = 0
     converted = converter.convert_coordinate(chrom, pos)
     if converted == []:
         # try offset by one. Unclear why it works at one site, but not 1 bp away
-        offset = 1
         converted = converter.convert_coordinate(chrom, pos + 1)
         if converted == []:
             raise ValueError("can't convert {}:{}".format(chrom, pos))
