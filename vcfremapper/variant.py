@@ -13,7 +13,7 @@ class Variant(object):
         self.pos = int(pos)
         self.alts = alts
         self.info = Info(self.info)
-        self.samples = None if len(line) == 7 else Samples(line[8], line[9:])
+        self.samples = None if len(line) == 8 else Samples(line[8], line[9:])
     
     def __str__(self):
         alts = ','.join(self.alts)
