@@ -21,7 +21,7 @@ class Variant(object):
             self.filter, self.info]
         
         if self.samples is not None:
-            data += self.samples
+            data.append(self.samples)
         
         return '\t'.join(map(str, data)) + '\n'
     
