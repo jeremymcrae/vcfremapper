@@ -76,6 +76,7 @@ class TestReverse(unittest.TestCase):
         # multi-allelic variants with indels return None
         var = self.Var(pos=10, ref='G', alts=['A', 'CC'])
         self.assertIsNone(reverse_var(var, genome))
+        genome.close()
     
     def test_reverse_snv(self):
         ''' check that reverse_snv works correctly
@@ -100,6 +101,7 @@ class TestReverse(unittest.TestCase):
         self.assertEqual(rev.pos, 9)
         self.assertEqual(rev.ref, 'A')
         self.assertEqual(rev.alts, ['AAA'])
+        genome.close()
     
     def test_reverse_deletion(self):
         ''' check that reverse_indel works correctly for deletions
@@ -110,6 +112,7 @@ class TestReverse(unittest.TestCase):
         self.assertEqual(rev.pos, 7)
         self.assertEqual(rev.ref, 'CTA')
         self.assertEqual(rev.alts, ['C'])
+        genome.close()
     
     def test_reverse_cnv(self):
         ''' check that reverse_cnv works correctly
@@ -120,6 +123,7 @@ class TestReverse(unittest.TestCase):
         
         self.assertEqual(var.pos, 10)
         self.assertEqual(var.ref, 'G')
+        genome.close()
     
     def test_is_snv(self):
         ''' check that is_snv works correctly
