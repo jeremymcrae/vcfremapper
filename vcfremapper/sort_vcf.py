@@ -16,18 +16,17 @@ def sort_vcf(coords, handle, outpath, header):
         header: header lines for the output VCF
     '''
     
-    seeker = open(handle.name, 'rt')
-    
-    try:
-        output = open(outpath, 'wt')
-    except TypeError:
-        output = outpath
-    
-    output.writelines(header)
-    for chrom in CHROMS:
-        if chrom not in coords:
-            continue
+    with open(handle.name, 'rt') as seeker:
+        try:
+            output = open(outpath, 'wt')
+        except TypeError:
+            output = outpath
         
-        for pos in sorted(coords[chrom]):
-            seeker.seek(coords[chrom][pos])
-            output.write(seeker.readline())
+        output.writelines(header)
+        for chrom in CHROMS:
+            if chrom not in coords:
+                continue
+            
+            for pos in sorted(coords[chrom]):
+                seeker.seek(coords[chrom][pos])
+                output.write(seeker.readline())
