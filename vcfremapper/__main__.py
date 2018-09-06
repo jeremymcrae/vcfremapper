@@ -46,6 +46,7 @@ def main():
         coords[mapped.chrom][mapped.pos] = temp.tell()
         temp.write(str(mapped))
     
+    temp.flush()
     prefixed = var.chrom.startswith('chr')
     try:
         sort_vcf(coords, temp, args.out, vcf.header)
