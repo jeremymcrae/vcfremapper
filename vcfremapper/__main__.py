@@ -46,7 +46,7 @@ def main():
     
     prefixed = var.chrom.startswith('chr')
     try:
-        sort_vcf(coords, temp, args.out, vcf.header, prefixed)
+        sort_vcf(coords, temp, args.out, vcf.header)
     except (BrokenPipeError, KeyboardInterrupt):
         pass
 
