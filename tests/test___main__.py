@@ -49,10 +49,13 @@ class TestMain(unittest.TestCase):
         get_options.set_attr('vcf', invcf)
         get_options.set_attr('out', outvcf)
 
-        # write a VCF to be converted
+        # write a VCF to be converted. This includes one variant which cannot be
+        # converted. TODO: make a unit test to check for expected log output for
+        # unconvertible variant
         with gzip.open(invcf, 'wt') as handle:
             handle.write('##fileformat=VCFv4.1\n' \
                 '#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n' \
+                '1\t10\t.\tT\tG\t100\tPASS\tAC=100\n' \
                 '1\t1000000\t.\tT\tG\t100\tPASS\tAC=100\n' \
                 '1\t2000000\t.\tA\tG\t100\tPASS\tAC=100\n')
 
