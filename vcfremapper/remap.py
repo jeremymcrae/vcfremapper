@@ -27,15 +27,18 @@ def remap(converter, var, genome):
     prefixed, chrom = prefix_chrom(var)
     
     try:
-        var.chrom, var.pos, strand = get_new_coords(converter, chrom, var.pos)
+        chrom, pos, strand = get_new_coords(converter, chrom, var.pos)
     except ValueError:
         return None
     
     if not prefixed:
-        var.chrom = var.chrom.strip('chr')
+        chrom = chrom.strip('chr')
     
-    if var.chrom not in CHROMS:
+    if chrom not in CHROMS:
         return None
+    
+    var.chrom = chrom
+    var.pos = pos
     
     if strand == '-':
         var = reverse_var(var, genome)
