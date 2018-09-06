@@ -24,26 +24,47 @@ def revcomp(seq):
     '''
     return reverse(complement(seq))
 
+def check_reference(var, genome):
+    ''' account for variants where the reference sequence has changed.
+    
+    This also requires GT, PL and AD fields, and various info fields to be
+    adjusted, if present.
+    '''
+    
+    _, chrom = prefix_chrom(var)
+    
+    end = var.pos + len(var.ref)
+    ref_base = genome[chrom][var.pos:end].seq
+    
+    if ref_base == var.ref:
+        return var
+    
+    if ref_base not in var.alts:
+        return None
+    
+    idx = var.alts.index(ref_base)
+    var.alts[idx] = var.ref
+    var.ref = ref_base
+    return var
+
 def reverse_var(var, genome):
     ''' convert a variant that has changed strand
     '''
     var.pos += 2
     
     if all(is_snv(var.ref, x) for x in var.alts):
-        return reverse_snv(var)
-    
-    # we can't convert multiallelic variants with non-SNV alts.
-    if len(var.alts) > 1:
-        return None
-    
-    if len(var.alts) == 1 and is_indel(var.ref, var.alts[0]):
-        return reverse_indel(var, genome)
+        var = reverse_snv(var)
+    elif len(var.alts) == 1 and is_indel(var.ref, var.alts[0]):
+        var = reverse_indel(var, genome)
     elif is_cnv(var.ref, var.alts, var.info):
-        return reverse_cnv(var, genome)
+        var = reverse_cnv(var, genome)
+    else:
+        var = None
     
-    # TODO: account for variants where the reference sequence has changed. This
-    # TODO: also requires GT, PL and AD fields, and various info fields to be
-    # TODO: adjusted, if present.
+    if var is not None:
+        var = check_reference(var, genome)
+    
+    return var
 
 def reverse_snv(var):
     ''' reverse a SNV
