@@ -24,7 +24,7 @@ class TestVcf(unittest.TestCase):
         '''
         
         vcf = VCF(self.handle)
-        self.assertEqual(vcf.header, \
+        self.assertEqual(list(vcf.header), \
             ['##fileformat=VCFv4.1\n',
             '#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n'])
     

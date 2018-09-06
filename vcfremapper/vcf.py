@@ -1,5 +1,6 @@
 
 from vcfremapper.variant import Variant
+from vcfremapper.header import Header
 
 class VCF(object):
     ''' VCF object, to hold VCF file handle
@@ -21,13 +22,17 @@ class VCF(object):
     
     @header.setter
     def header(self, handle):
-        self._header = []
+        self._header = Header()
         for line in handle:
-            if line.startswith('#'):
+            try:
                 self._header.append(line)
-            else:
-                self.first = line
+            except ValueError:
                 break
+        
+        self.first = line
+        
+        # make sure all the header data is available within variants
+        Variant.set_header(self._header)
     
     def __iter__(self):
         return self

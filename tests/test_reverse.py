@@ -65,7 +65,7 @@ class TestReverse(unittest.TestCase):
         ''' check that reverse_var works correctly
         '''
         genome = Fasta(self.fa)
-        var = self.Var(pos=10, ref='G', alts=['A', 'C'])
+        var = self.Var(chrom='chrN', pos=10, ref='G', alts=['A', 'C'])
         rev = reverse_var(var, genome)
         self.assertEqual(var.ref, 'G')
         
@@ -74,7 +74,7 @@ class TestReverse(unittest.TestCase):
         self.assertEqual(var.pos, 12)
         
         # multi-allelic variants with indels return None
-        var = self.Var(pos=10, ref='G', alts=['A', 'CC'])
+        var = self.Var(pos=10, ref='G', alts=['A', 'CC'], info={})
         self.assertIsNone(reverse_var(var, genome))
         genome.close()
     

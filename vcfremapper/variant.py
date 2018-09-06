@@ -5,6 +5,11 @@ from vcfremapper.samples import Samples
 class Variant(object):
     ''' Variant object, to hold data from VCF line
     '''
+    header = None
+    @classmethod
+    def set_header(cls, header):
+        cls.header = header
+    
     def __init__(self, line):
         line = line.strip('\n').split('\t')
         self.chrom, pos, self.var_id, self.ref, alts, self.qual, self.filter, \
