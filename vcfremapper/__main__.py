@@ -6,6 +6,7 @@ import sys
 import tempfile
 import argparse
 from collections import defaultdict
+import logging
 
 from pyliftover import LiftOver
 from pyfaidx import Fasta
@@ -38,6 +39,7 @@ def main():
     for var in vcf:
         mapped = remap(converter, var, genome)
         if mapped is None:
+            logging.warning('{}:{} {}->{}'.format(var.chrom, var.pos, var.ref, ','.join(var.alts)))
             continue
         
         # index the variants filepos, so we can quickly sort later
