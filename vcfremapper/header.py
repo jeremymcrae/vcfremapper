@@ -18,13 +18,13 @@ class Header(object):
             raise ValueError('not a VCF header line')
 
         if line.startswith('##INFO'):
-            self.attribute = self.info
+            attribute = self.info
         elif line.startswith('##FORMAT'):
-            self.attribute = self.format
+            attribute = self.format
         else:
             return
 
-        self.attribute.update(parse_metadata(line))
+        attribute.update(parse_metadata(line))
 
     def __iter__(self):
         return self
