@@ -9,10 +9,7 @@ def get_new_coords(converter, chrom, pos):
     # try at the given site
     converted = converter.convert_coordinate(chrom, pos)
     if converted == []:
-        # try offset by one. Unclear why it works at one site, but not 1 bp away
-        converted = converter.convert_coordinate(chrom, pos + 1)
-        if converted == []:
-            raise ValueError("can't convert {}:{}".format(chrom, pos))
+        raise ValueError("can't convert {}:{}".format(chrom, pos))
     
     return converted[0][:3]
 

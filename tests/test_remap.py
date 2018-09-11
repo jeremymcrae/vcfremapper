@@ -23,7 +23,7 @@ class TestRemap(unittest.TestCase):
         self.assertEqual(data, ('chr1', 1064620, '+'))
 
         # check a pos which swaps strand
-        data = get_new_coords(self.lift, 'chr1', 317718)
+        data = get_new_coords(self.lift, 'chr1', 317719)
         self.assertEqual(data, ('chr1', 501616, '-'))
         
         # positions no longer in the new genome build raise errors
