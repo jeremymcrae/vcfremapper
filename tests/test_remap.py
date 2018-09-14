@@ -20,10 +20,10 @@ class TestRemap(unittest.TestCase):
         '''
 
         data = get_new_coords(self.lift, 'chr1', 1000000)
-        self.assertEqual(data, ('chr1', 1064620, '+'))
+        self.assertEqual(data, ('chr1', 1064619, '+'))
 
         # check a pos which swaps strand
-        data = get_new_coords(self.lift, 'chr1', 317719)
+        data = get_new_coords(self.lift, 'chr1', 317720)
         self.assertEqual(data, ('chr1', 501616, '-'))
         
         # positions no longer in the new genome build raise errors
@@ -55,5 +55,5 @@ class TestRemap(unittest.TestCase):
         ''' check a variant where the variant maps to a non-standard chromosome
         '''
         genome = None
-        var = Variant('1\t13027994\t.\tA\tG\t100\tPASS\tAC=100\n')
+        var = Variant('1\t13027995\t.\tA\tG\t100\tPASS\tAC=100\n')
         self.assertIsNone(remap(self.lift, var, genome))

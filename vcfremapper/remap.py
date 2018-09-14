@@ -6,8 +6,8 @@ from vcfremapper.utils import prefix_chrom
 def get_new_coords(converter, chrom, pos):
     ''' find the remapped chrom, position and strand
     '''
-    # try at the given site
-    converted = converter.convert_coordinate(chrom, pos)
+    # try at the given site, but use zero-indexed position
+    converted = converter.convert_coordinate(chrom, pos-1)
     if converted == []:
         raise ValueError("can't convert {}:{}".format(chrom, pos))
     
@@ -34,8 +34,9 @@ def remap(converter, var, genome):
     if chrom not in CHROMS:
         return None
     
+    # set updated coords, and convert back from 0-indexed position
     var.chrom = chrom
-    var.pos = pos
+    var.pos = pos + 1
     
     if strand == '-':
         var = reverse_var(var, genome)
