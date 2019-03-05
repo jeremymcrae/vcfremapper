@@ -50,7 +50,7 @@ def check_reference(var, genome):
 def reverse_var(var, genome):
     ''' convert a variant that has changed strand
     '''
-    var.pos += 2
+    var.pos += 1
     
     if all(is_snv(var.ref, x) for x in var.alts):
         var = reverse_snv(var)
