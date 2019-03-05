@@ -67,11 +67,11 @@ class TestReverse(unittest.TestCase):
         genome = Fasta(self.fa)
         var = self.Var(chrom='chrN', pos=10, ref='G', alts=['A', 'C'])
         rev = reverse_var(var, genome)
-        self.assertEqual(var.ref, 'G')
+        self.assertEqual(rev.ref, 'C')
         
         # the position is shifted upwards, because of how pyLiftover changes
         # the coordinates for the reverse strand
-        self.assertEqual(var.pos, 12)
+        self.assertEqual(var.pos, 11)
         
         # multi-allelic variants with indels return None
         var = self.Var(pos=10, ref='G', alts=['A', 'CC'], info={})
