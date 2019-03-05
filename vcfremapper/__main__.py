@@ -23,7 +23,7 @@ def get_options():
         help='path to reference genome, for the build being converted to.')
     parser.add_argument('--build-in', default='hg19', help='build to convert from')
     parser.add_argument('--build-out', default='hg38', help='build to convert to')
-    parser.add_argument('--tempdir', default='/scratch')
+    parser.add_argument('--tempdir')
     
     return parser.parse_args()
 
