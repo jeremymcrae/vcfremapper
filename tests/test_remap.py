@@ -44,6 +44,16 @@ class TestRemap(unittest.TestCase):
         self.assertEqual(var.chrom, '1')
         self.assertEqual(var.pos, 1064620)
 
+    def test_remap_missing_alt(self):
+        ''' check remapping a variant without alts
+        '''
+
+        genome = None
+        var = Variant('1\t1000000\t.\tA\t.\t100\tPASS\tAC=100\n')
+        var = remap(self.lift, var, genome)
+        self.assertEqual(var.chrom, '1')
+        self.assertEqual(var.pos, 1064620)
+
     def test_remap_not_in_build(self):
         ''' check a variant where the position is not in the new build
         '''

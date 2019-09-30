@@ -1,4 +1,6 @@
 
+from copy import deepcopy
+
 from vcfremapper.revcomp import reverse_var
 from vcfremapper import CHROMS
 from vcfremapper.utils import prefix_chrom
@@ -35,10 +37,12 @@ def remap(converter, var, genome):
         return None
     
     # set updated coords, and convert back from 0-indexed position
-    var.chrom = chrom
-    var.pos = pos + 1
+    mapped = deepcopy(var)
+    mapped.chrom = chrom
+    mapped.pos = pos
     
     if strand == '-':
-        var = reverse_var(var, genome)
+        mapped = reverse_var(mapped, genome)
     
-    return var
+    mapped.pos += 1
+    return mapped

@@ -27,7 +27,7 @@ class TestReverse(unittest.TestCase):
         cls.fa = os.path.join(cls.dir, 'genome.fa')
         with open(cls.fa, mode='wt') as handle:
             handle.write('>chrN\n')
-            handle.write('ACTGATGCTAGCTAGTATCTGACTCAGTAGCTCGAT\n')
+            handle.write('ACTGATGCTAGCTAGTATCTG\n')
         
         # index the fasta file
         fai = Faidx(cls.fa)
@@ -65,12 +65,11 @@ class TestReverse(unittest.TestCase):
         ''' check that reverse_var works correctly
         '''
         genome = Fasta(self.fa)
-        var = self.Var(chrom='chrN', pos=10, ref='G', alts=['A', 'C'])
+        var = self.Var(chrom='chrN', pos=11, ref='G', alts=['A', 'C'])
         rev = reverse_var(var, genome)
         self.assertEqual(rev.ref, 'C')
         
-        # the position is shifted upwards, because of how pyLiftover changes
-        # the coordinates for the reverse strand
+        # the position stays the same
         self.assertEqual(var.pos, 11)
         
         # multi-allelic variants with indels return None
@@ -78,36 +77,46 @@ class TestReverse(unittest.TestCase):
         self.assertIsNone(reverse_var(var, genome))
         genome.close()
     
+    def test_reverse_missing_alt(self):
+        ''' check that reverse  works correctly
+        '''
+        genome = Fasta(self.fa)
+        var = self.Var(chrom='N', pos=10, ref='C', alts=['.'])
+        rev = reverse_var(var, genome)
+        self.assertEqual(rev.ref, 'G')
+        self.assertEqual(rev.alts, ['.'])
+        self.assertEqual(rev.pos, 10)
+
     def test_reverse_snv(self):
         ''' check that reverse_snv works correctly
         '''
-        var = self.Var(pos=10, ref='G', alts=['A', 'C'])
+        var = self.Var(pos=10, ref='C', alts=['A', 'G'])
         rev = reverse_snv(var)
-        self.assertEqual(rev.alts, ['A', 'C'])
+        self.assertEqual(rev.alts, ['T', 'C'])
         
         # now try a SNV with longer allele codes
-        var = self.Var(pos=10, ref='GCT', alts=['TCT', 'CCT'])
+        var = self.Var(pos=10, ref='CTA', alts=['ATA', 'GTA'])
         rev = reverse_snv(var)
-        self.assertEqual(rev.alts, ['TCT', 'TCC'])
-        self.assertEqual(rev.ref, 'TCG')
+        self.assertEqual(rev.alts, ['TAT', 'TAC'])
+        self.assertEqual(rev.ref, 'TAG')
         self.assertEqual(rev.pos, 8)
     
     def test_reverse_insertion(self):
         ''' check that reverse_indel works correctly for insertions
         '''
         genome = Fasta(self.fa)
-        var = self.Var(pos=10, chrom='N', ref='G', alts=['GAA'])
+        var = self.Var(pos=11, chrom='N', ref='G', alts=['GAA'])
         rev = reverse_indel(var, genome)
-        self.assertEqual(rev.pos, 9)
-        self.assertEqual(rev.ref, 'A')
-        self.assertEqual(rev.alts, ['AAA'])
+        self.assertEqual(rev.pos, 10)
+        self.assertEqual(rev.ref, 'G')
+        self.assertEqual(rev.alts, ['GTT'])
         genome.close()
     
     def test_reverse_deletion(self):
         ''' check that reverse_indel works correctly for deletions
         '''
         genome = Fasta(self.fa)
-        var = self.Var(pos=10, chrom='N', ref='GAT', alts=['G'])
+        var = self.Var(pos=10, chrom='N', ref='CTA', alts=['C'])
         rev = reverse_indel(var, genome)
         self.assertEqual(rev.pos, 7)
         self.assertEqual(rev.ref, 'CTA')

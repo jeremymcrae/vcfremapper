@@ -7,7 +7,7 @@ except ImportError:
 from vcfremapper.utils import prefix_chrom
 
 transdict = maketrans('ACGTNacgtn*', 'TGCANtgcan*')
-BASES = set(['A', 'C', 'G', 'T', 'N', '*'])
+BASES = set(['A', 'C', 'G', 'T', 'N', '*', '.'])
 
 def reverse(seq):
     ''' reverse a sequence
@@ -50,7 +50,6 @@ def check_reference(var, genome):
 def reverse_var(var, genome):
     ''' convert a variant that has changed strand
     '''
-    var.pos += 1
     
     if all(is_snv(var.ref, x) for x in var.alts):
         var = reverse_snv(var)
@@ -69,16 +68,16 @@ def reverse_var(var, genome):
 def reverse_snv(var):
     ''' reverse a SNV
     '''
-    var.ref = reverse(var.ref)
-    var.alts = [reverse(x) for x in var.alts]
+    var.ref = revcomp(var.ref)
+    var.alts = [revcomp(x) for x in var.alts]
     var.pos -= len(var.ref) - 1
     return var
 
 def reverse_indel(var, genome):
     ''' reverse an indel (with only one alt allele)
     '''
-    ref = reverse(var.ref)
-    alt = reverse(var.alts[0])
+    ref = revcomp(var.ref)
+    alt = revcomp(var.alts[0])
     var.pos -= len(ref)
     _, chrom = prefix_chrom(var)
     
@@ -120,7 +119,7 @@ def is_snv(ref, alt):
 def is_indel(ref, alt):
     ''' check whether the ref and alt alleles are for an indel
     '''
-    return len(ref) > 1 or len(alt) > 1 and \
+    return (len(ref) > 1 or len(alt) > 1) and \
         (BASES.issuperset(set(alt) | set(ref)))
 
 def is_cnv(ref, alt, info):
