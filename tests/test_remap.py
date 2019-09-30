@@ -2,7 +2,7 @@
 import unittest
 
 # from pyfaidx import Fasta
-from pyliftover import LiftOver
+from liftover import get_lifter
 
 from vcfremapper.remap import get_new_coords, remap
 from vcfremapper.variant import Variant
@@ -13,7 +13,7 @@ class TestRemap(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
-        cls.lift = LiftOver('hg19', 'hg38')
+        cls.lift = get_lifter('hg19', 'hg38')
 
     def test_get_new_coords(self):
         ''' check getting new coordinates for a variant
@@ -30,9 +30,9 @@ class TestRemap(unittest.TestCase):
         with self.assertRaises(ValueError):
             get_new_coords(self.lift, 'chr1', 1)
 
-        # unprefixed chromosomes can't be converted
-        with self.assertRaises(TypeError):
-            get_new_coords(self.lift, '1', 1000000)
+        # unprefixed chromosomes can be converted
+        data = get_new_coords(self.lift, '1', 1000000)
+        self.assertEqual(data, ('chr1', 1064619, '+'))
 
     def test_remap(self):
         ''' check remapping a variant

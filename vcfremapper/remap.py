@@ -7,7 +7,7 @@ def get_new_coords(converter, chrom, pos):
     ''' find the remapped chrom, position and strand
     '''
     # try at the given site, but use zero-indexed position
-    converted = converter.convert_coordinate(chrom, pos-1)
+    converted = converter[chrom][pos-1]
     if converted == []:
         raise ValueError("can't convert {}:{}".format(chrom, pos))
     

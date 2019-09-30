@@ -15,7 +15,7 @@ setup(name="vcfremapper",
     url='https://github.com/jeremymcrae/vcfremapper',
     packages=["vcfremapper"],
     install_requires=[
-        'pyliftover >= 0.3.0',
+        'liftover >= 1.0.0',
         'pyfaidx >= 0.5.4'
     ],
     entry_points={'console_scripts': ['vcfremapper = vcfremapper.__main__:main']},

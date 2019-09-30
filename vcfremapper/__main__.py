@@ -8,7 +8,7 @@ import argparse
 from collections import defaultdict
 import logging
 
-from pyliftover import LiftOver
+from liftover import get_lifter
 from pyfaidx import Fasta
 
 from vcfremapper.vcf import VCF
@@ -29,7 +29,7 @@ def get_options():
 
 def main():
     args = get_options()
-    converter = LiftOver(args.build_in, args.build_out)
+    converter = get_lifter(args.build_in, args.build_out)
     genome = Fasta(args.reference)
     
     vcf = VCF(gzip.open(args.vcf, 'rt'))
