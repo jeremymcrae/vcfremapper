@@ -27,7 +27,7 @@ class TestReverse(unittest.TestCase):
         cls.fa = os.path.join(cls.dir, 'genome.fa')
         with open(cls.fa, mode='wt') as handle:
             handle.write('>chrN\n')
-            handle.write('ACTGATGCTAGCTAGTATCTG\n')
+            handle.write('NNTGATGCTAGCTAGTATCTG\n')
         
         # index the fasta file
         fai = Faidx(cls.fa)
@@ -86,6 +86,16 @@ class TestReverse(unittest.TestCase):
         self.assertEqual(rev.ref, 'G')
         self.assertEqual(rev.alts, ['.'])
         self.assertEqual(rev.pos, 10)
+    
+    def test_reverse_missing_ref(self):
+        ''' check that reverse  works correctly
+        '''
+        genome = Fasta(self.fa)
+        var = self.Var(chrom='N', pos=1, ref='N', alts=['.'])
+        rev = reverse_var(var, genome)
+        self.assertEqual(rev.ref, 'N')
+        self.assertEqual(rev.alts, ['.'])
+        self.assertEqual(rev.pos, 1)
 
     def test_reverse_snv(self):
         ''' check that reverse_snv works correctly
