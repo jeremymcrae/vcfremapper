@@ -34,7 +34,7 @@ def main():
     genome = Fasta(args.reference, sequence_always_upper=True)
     
     vcf = VCF(gzip.open(args.vcf, 'rt'))
-    temp = tempfile.TemporaryFile('wt', dir=args.tempdir)
+    temp = tempfile.NamedTemporaryFile('wt', suffix='.vcf', dir=args.tempdir)
     
     coords = defaultdict(dict)
     for var in vcf:
