@@ -37,9 +37,11 @@ def main():
     
     coords = defaultdict(dict)
     for var in vcf:
+        # stash unaltered variant info, in case of errors
+        chrom, pos, ref, alts = var.chrom, var.pos, var.ref, var.alts
         mapped = remap(converter, var, genome)
         if mapped is None:
-            logging.warning('{}:{} {}->{}'.format(var.chrom, var.pos, var.ref, ','.join(var.alts)))
+            logging.warning('{}:{} {}->{}'.format(chrom, pos, ref, ','.join(alts)))
             continue
         
         # index the variants filepos, so we can quickly sort later
