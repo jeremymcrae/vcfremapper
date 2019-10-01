@@ -29,6 +29,7 @@ def get_options():
 
 def main():
     args = get_options()
+    logging.basicConfig(format='%(asctime)s %(message)s')
     converter = get_lifter(args.build_in, args.build_out)
     genome = Fasta(args.reference)
     
