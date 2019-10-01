@@ -31,7 +31,7 @@ def main():
     args = get_options()
     logging.basicConfig(format='%(asctime)s %(message)s')
     converter = get_lifter(args.build_in, args.build_out)
-    genome = Fasta(args.reference)
+    genome = Fasta(args.reference, sequence_always_upper=True)
     
     vcf = VCF(gzip.open(args.vcf, 'rt'))
     temp = tempfile.TemporaryFile('wt', dir=args.tempdir)
