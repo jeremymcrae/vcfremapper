@@ -46,7 +46,7 @@ def main():
             continue
         
         # index the variants filepos, so we can quickly sort later
-        coords[mapped.chrom][(mapped.pos, mapped.ref, mapped.alts)] = temp.tell()
+        coords[mapped.chrom][(mapped.pos, mapped.ref, tuple(mapped.alts))] = temp.tell()
         temp.write(str(mapped))
     
     temp.flush()
